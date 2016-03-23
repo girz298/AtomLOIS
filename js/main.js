@@ -26,7 +26,7 @@
       return curr.match(/[01]/g);
     });
   }
-  console.log(getArrOfBin(Math.pow(2,findCountOfVar("(A^B+C+D)"))));
+  console.log(getArrOfBin(Math.pow(2,findCountOfVar("(A^B+C+D+D+C+A)"))));
 
   // (A+B)*(B+C)+(!(A*B))
   function getAllSubForm(str){
