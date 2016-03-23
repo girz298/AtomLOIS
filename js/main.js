@@ -1,4 +1,5 @@
 (function(){
+  var PORYADOK_PEREMENNIH = "";
   function findCountOfVar(str){
     var testStr = str.match(/[A-Z]/g);
     for (var i = 0; i < testStr.length; i++) {
@@ -8,6 +9,7 @@
           }
         }
     }
+    PORYADOK_PEREMENNIH = testStr.join("").match(/[A-Z]/g);
     return testStr.join("").length;
   }
   console.log(findCountOfVar("(A^B+C+B+A+DABHTABAB)"));
@@ -41,6 +43,13 @@
     .replace("->"," <= ").replace("~"," == ");
   }
 
+  // console.log(PORYADOK_PEREMENNIH);
+
+  var testModel = new ModelOfIteration(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar("(A^B+C+D+D+C+A)")))[0]);
+  console.log(testModel.getObject());
+  var testModel2 = new ModelOfIteration(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar("(A^B+C+D+D+C+A)")))[5]);
+  console.log(testModel2.getObject());
+  console.log(testModel.getObject());
   console.log(getAllSubForm("(((A+B)*(B+C))+(!(A*B)))"));
   console.log("(A+B)*(B+C)+(!(A*B))".match(/\(.{0,3}\)/g));
   console.log("((1^0)->1)~1".replaceToGood());
