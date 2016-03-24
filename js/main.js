@@ -1,6 +1,6 @@
 (function(){
   var PORYADOK_PEREMENNIH = "";
-  var TESTINGSTR = "(((A^B)v(B^C))+(!A)+(!(A->B)))";
+  var TESTINGSTR = "(((A^B)v(BvC))+(!A)+(!(A->B)))";
   function findCountOfVar(str){
     var testStr = str.match(/[A-Z]/g);
     for (var i = 0; i < testStr.length; i++) {
@@ -102,12 +102,12 @@
         }
         // console.log(localStr);
         // console.log(eval(localStr.replaceToGood()));
-        obj[nameOfProp]= eval(localStr.replaceToGood());
+        obj[nameOfProp]= eval(localStr.replaceToGood())===false || eval(localStr.replaceToGood())===0?0:1;
         // console.log(arrOfVars);
       }
     }
   }
-
+  console.log(1 && 1);
   // console.log(PORYADOK_PEREMENNIH);
 
   //
