@@ -1,6 +1,6 @@
 (function(){
   var PORYADOK_PEREMENNIH = "";
-  var TESTINGSTR = "(((A^B)v(BvC))+(!A)+(!(A->B)))";
+  var TESTINGSTR = "(((A^B)v(BvC))^(!A)^((A->B)))";
   function findCountOfVar(str){
     var testStr = str.match(/[A-Z]/g);
     for (var i = 0; i < testStr.length; i++) {
@@ -60,12 +60,13 @@
     locStr.match(/\(.{3}\)/g).forEach(function(curr){
       var localcurr = curr;
       arrOfObjects.forEach(function(curr2){ //Тестовое дерьмо поообещай мне что уберешь это отсюда т.к не универсально
+        curr2[str] = undefined;
         curr2[localcurr] = undefined;
       });
       arrOfSubForm.push(curr);
     });
     if(locStr.indexOf("!")!==-1){
-      locStr.match(/\(.{2}\)/g).forEach(function(curr){
+      locStr.match(/\(!.+\)/g).forEach(function(curr){
         var localcurr = curr;
         arrOfObjects.forEach(function(curr2){   //Тестовое дерьмо поообещай мне что уберешь это отсюда т.к не универсально
           curr2[localcurr] = undefined;
@@ -84,8 +85,8 @@
 
 
   String.prototype.replaceToGood = function(){
-    return this.replace("^"," && ").replace("v"," || ")
-    .replace("->"," <= ").replace("~"," == ");
+    return this.replace(/\^/g," && ").replace(/v/g," || ")
+    .replace(/\->/g," <= ").replace(/\~/g," == ");
   }
   arrOfObjects.forEach(function(curr){getLogicResult(curr);});
 
@@ -102,7 +103,7 @@
         }
         // console.log(localStr);
         // console.log(eval(localStr.replaceToGood()));
-        obj[nameOfProp]= eval(localStr.replaceToGood())===false || eval(localStr.replaceToGood())===0?0:1;
+        obj[nameOfProp]= eval(localStr.replaceToGood())===false || eval(localStr.replaceToGood())===0?"0":"1";
         // console.log(arrOfVars);
       }
     }
