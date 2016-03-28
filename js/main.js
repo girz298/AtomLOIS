@@ -1,7 +1,13 @@
 (function(){
   var PORYADOK_PEREMENNIH = "";
-  //var TESTINGSTR = "(((A^B)v(BvC))^((!A)^(A->B)))";
-  var TESTINGSTR = "((P~Q)~R)";
+  var TESTINGSTR = "(((A^B)v(BvC))^((!A)^(A->B)))";
+//  var TESTINGSTR = "((S~R)~((((P^S)^Q)v(!S))->))";
+
+
+  /*
+    Метод отвечающий за поиск кол-ва переменных в лог. выражении.
+  */
+
   function findCountOfVar(str){
     var testStr = str.match(/[A-Z]/g);
     for (var i = 0; i < testStr.length; i++) {
@@ -15,11 +21,10 @@
     return testStr.join("").length;
   }
 
-  findCountOfVar(TESTINGSTR);
-  // var testModel = new ModelOfIteration(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar(TESTINGSTR)))[0]);
-  // console.log(testModel.getObject());
-  var arrOfObjects = createArrayOfObjects(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar(TESTINGSTR))));
-  console.log(arrOfObjects);
+
+  /*
+    Метод создающий массив объектов являющимися строкой в таблице истинности.
+  */
 
   function createArrayOfObjects(poryadok,arraOfArr){
     var resultArr = [];
@@ -29,6 +34,11 @@
     return resultArr;
   }
 
+
+  /*
+    Метод создающий двуменный массив с бинарным представлением чисел от 0 до
+    2 в стемени кол-ва переменных;
+  */
 
   function getArrOfBin(count){
     var arrOfInt = [];
@@ -45,6 +55,11 @@
     });
   }
 
+
+  /*
+    Метод возвращающий массив подформул.
+  */
+
   function getAllSubForm(str){
     var locStr = str;
     if(str.match(/[(]/g).length!==str.match(/[)]/g).length && str ){   //добавить проверку валидных символов
@@ -56,7 +71,6 @@
     locStr = removeFirstAndLastSymbol(locStr);
 
     arrOfSubForm = arrOfSubForm.concat(locStr.match(/\({1}[^\(\)]{3,4}\){1}/g));
-
     if(locStr.indexOf("!")!==-1){
       arrOfSubForm = arrOfSubForm.concat(locStr.match(/\(![A-Z]{1}\)/g));
     }
@@ -81,7 +95,7 @@
       var counter = 0;
       var positionOfLast = 0;
       var countOfScob = 0;
-      for (var i = reqStr.length; i > 0 ; i--) {
+      for (var i = reqStr.length; i >= 0 ; i--) {
         if (reqStr[i] === ")") {
           countOfScob++;
           counter++;
@@ -95,60 +109,74 @@
         }
       }
     })(locStr);
-
-    arrOfSubForm.forEach(function(curr){
-      var localcurr = curr;
-      arrOfObjects.forEach(function(curr2){
-        curr2[localcurr] = undefined;
-      });
-    });
-    console.log(arrOfSubForm);
+  //  console.log(arrOfSubForm);
     return arrOfSubForm;
   }
 
 
+  /*
+    Метод удаляющий первый и послединй символ из строки.
+  */
 
   function removeFirstAndLastSymbol(str){
     return str.slice(1,str.length-1);
   }
-  getAllSubForm(TESTINGSTR);
 
+
+  /*
+    Метод добавляющий к каждому объекту из массива свойства-подформулы.
+  */
+
+  function addArrOfPropToAllObj(arrOfInObjects, arrOfProps){
+    arrOfProps.forEach(function(curr){
+      var localcurr = curr;
+      arrOfInObjects.forEach(function(curr2){
+        curr2[localcurr] = undefined;
+      });
+    });
+  };
+
+
+  /*
+    Прототипный метод объекта String для замены пользовательский символов на
+    спецсимволы .
+  */
 
   String.prototype.replaceToGood = function(){
     return this.replace(/\^/g," && ").replace(/v/g," || ")
     .replace(/\->/g," <= ").replace(/\~/g," == ");
   }
-  arrOfObjects.forEach(function(curr){getLogicResult(curr);});
+
+
+  /*
+    Метод для вычисления результата лог. формулы.
+  */
 
   function getLogicResult(obj){
-    var nameOfProp;
-    for(nameOfProp in obj){
-      if(obj[nameOfProp]===undefined){
-        var localStr = nameOfProp;
-        // console.log(localStr.match(/[A-Z]/g));
-        while(localStr.match(/[A-Z]/g)){
-          var locArr = localStr.match(/[A-Z]/g);
-          localStr = localStr.replace(locArr[0],obj[locArr[0]]);
-
+      var nameOfProp;
+      for(nameOfProp in obj){
+        if(obj[nameOfProp]===undefined){
+          var localStr = nameOfProp;
+          // console.log(localStr.match(/[A-Z]/g));
+          while(localStr.match(/[A-Z]/g)){
+            var locArr = localStr.match(/[A-Z]/g);
+            localStr = localStr.replace(locArr[0],obj[locArr[0]]);
+          }
+          obj[nameOfProp]= eval(localStr.replaceToGood())===false || eval(localStr.replaceToGood())===0?"0":"1";
         }
-        // console.log(localStr);
-        // console.log(eval(localStr.replaceToGood()));
-        obj[nameOfProp]= eval(localStr.replaceToGood())===false || eval(localStr.replaceToGood())===0?"0":"1";
-        // console.log(arrOfVars);
       }
     }
-  }
-  console.log(1 && 1);
 
 
-  // console.log(PORYADOK_PEREMENNIH);
+  /*
+    Цепочка вызова методов.
+  */
 
-  //
-  // var testModel2 = new ModelOfIteration(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar(TESTINGSTR)))[5]);
-  // console.log(testModel2.getObject());
-  // console.log(testModel.getObject());
-  // console.log(getAllSubForm("(((A+B)*(B+C))+(!A)+(!(A*B)))"));
-  // console.log("(A+B)*(B+C)+(!(A*B))".match(/!*\(.{3}\)/g));
-  // console.log("((1^0)->1)~1".replaceToGood());
-  // console.log(eval("(((1^1)->0)~0)".replaceToGood())); //goooooooood
+
+  findCountOfVar(TESTINGSTR); // можно пофиксить
+  var arrOfObjects = createArrayOfObjects(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar(TESTINGSTR))));
+  addArrOfPropToAllObj(arrOfObjects,getAllSubForm(TESTINGSTR));
+  arrOfObjects.forEach(function(curr){getLogicResult(curr);});
+
+  console.log(arrOfObjects);
 }());
