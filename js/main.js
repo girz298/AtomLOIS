@@ -1,6 +1,7 @@
 (function(){
   var PORYADOK_PEREMENNIH = "";
-  var TESTINGSTR = "(((A^B)v(BvC))^(!A)^((A->B)))";
+  //var TESTINGSTR = "(((A^B)v(BvC))^((!A)^(A->B)))";
+  var TESTINGSTR = "((P~Q)~R)";
   function findCountOfVar(str){
     var testStr = str.match(/[A-Z]/g);
     for (var i = 0; i < testStr.length; i++) {
@@ -14,7 +15,7 @@
     return testStr.join("").length;
   }
 
-  findCountOfVar(TESTINGSTR)
+  findCountOfVar(TESTINGSTR);
   // var testModel = new ModelOfIteration(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar(TESTINGSTR)))[0]);
   // console.log(testModel.getObject());
   var arrOfObjects = createArrayOfObjects(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar(TESTINGSTR))));
@@ -43,40 +44,69 @@
       return curr.match(/[01]/g);
     });
   }
-  // console.log(getArrOfBin(Math.pow(2,findCountOfVar(TESTINGSTR))));
 
-  // (A+B)*(B+C)+(!(A*B))
   function getAllSubForm(str){
     var locStr = str;
     if(str.match(/[(]/g).length!==str.match(/[)]/g).length && str ){   //добавить проверку валидных символов
-      return "Invalid sequence";
+         alert("Invalid sequence");
+         return "Invalid sequence";
     }
-
     var arrOfSubForm = [];
     arrOfSubForm.push(locStr);
     locStr = removeFirstAndLastSymbol(locStr);
-    // console.log(reqFindAll(locStr));
-    arrOfSubForm.push(locStr);
-    locStr.match(/\(.{3}\)/g).forEach(function(curr){
-      var localcurr = curr;
-      arrOfObjects.forEach(function(curr2){ //Тестовое дерьмо поообещай мне что уберешь это отсюда т.к не универсально
-        curr2[str] = undefined;
-        curr2[localcurr] = undefined;
-      });
-      arrOfSubForm.push(curr);
-    });
+
+    arrOfSubForm = arrOfSubForm.concat(locStr.match(/\({1}[^\(\)]{3,4}\){1}/g));
+
     if(locStr.indexOf("!")!==-1){
-      locStr.match(/\(!.+\)/g).forEach(function(curr){
-        var localcurr = curr;
-        arrOfObjects.forEach(function(curr2){   //Тестовое дерьмо поообещай мне что уберешь это отсюда т.к не универсально
-          curr2[localcurr] = undefined;
-        });
-        arrOfSubForm.push(curr);
-      });
+      arrOfSubForm = arrOfSubForm.concat(locStr.match(/\(![A-Z]{1}\)/g));
     }
 
+    (function reqFindAllSub(reqStr){
+      var counter = 0;
+      var positionOfLast = 0;
+      for (var i = 0 , len = reqStr.length; i < len ; i++) {
+        if (reqStr[i] === "(") {
+          counter++;
+        }else if (reqStr[i] === ")") {
+          positionOfLast = i;
+          counter--;
+        }else if (counter === 0 && reqStr.slice(1,positionOfLast).length>4) {
+          arrOfSubForm.push(reqStr.slice(1,positionOfLast));
+          reqFindAllSub(reqStr.slice(1,positionOfLast));
+        }
+      }
+    })(locStr);
+
+    (function reqFindAllSub(reqStr){
+      var counter = 0;
+      var positionOfLast = 0;
+      var countOfScob = 0;
+      for (var i = reqStr.length; i > 0 ; i--) {
+        if (reqStr[i] === ")") {
+          countOfScob++;
+          counter++;
+        }else if (reqStr[i] === "(") {
+          countOfScob++;
+          positionOfLast = i;
+          counter--;
+        }else if (counter === 0 && countOfScob>2 && reqStr.slice(positionOfLast+1,reqStr.length-1).length>4) {
+          arrOfSubForm.push(reqStr.slice(positionOfLast+1,reqStr.length-1));
+          reqFindAllSub(reqStr.slice(positionOfLast+1,reqStr.length-1));
+        }
+      }
+    })(locStr);
+
+    arrOfSubForm.forEach(function(curr){
+      var localcurr = curr;
+      arrOfObjects.forEach(function(curr2){
+        curr2[localcurr] = undefined;
+      });
+    });
+    console.log(arrOfSubForm);
     return arrOfSubForm;
   }
+
+
 
   function removeFirstAndLastSymbol(str){
     return str.slice(1,str.length-1);
@@ -109,6 +139,8 @@
     }
   }
   console.log(1 && 1);
+
+
   // console.log(PORYADOK_PEREMENNIH);
 
   //
