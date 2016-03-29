@@ -1,8 +1,8 @@
 (function(){
   var PORYADOK_PEREMENNIH = "";
-//  var TESTINGSTR = "(((A^B)v(BvC))^((!A)^(A->B)))";
- var TESTINGSTR = "(((P^(!Q))->Q)->(P->Q))";
 
+  var TESTINGSTR = "(((A^B)v(BvC))^((!A)^(A->(B^G))))";
+  //  var TESTINGSTR = "((P->Q)~P)";
 
   /*
     Метод отвечающий за поиск кол-ва переменных в лог. выражении.
@@ -109,7 +109,7 @@
         }
       }
     })(locStr);
-  //  console.log(arrOfSubForm);
+   console.log(arrOfSubForm);
     return arrOfSubForm;
   }
 
@@ -131,7 +131,9 @@
     arrOfProps.forEach(function(curr){
       var localcurr = curr;
       arrOfInObjects.forEach(function(curr2){
-        curr2[localcurr] = undefined;
+        if (localcurr) {
+          curr2[localcurr] = undefined;
+        }
       });
     });
   };
@@ -177,6 +179,36 @@
   var arrOfObjects = createArrayOfObjects(PORYADOK_PEREMENNIH,getArrOfBin(Math.pow(2,findCountOfVar(TESTINGSTR))));
   addArrOfPropToAllObj(arrOfObjects,getAllSubForm(TESTINGSTR));
   arrOfObjects.forEach(function(curr){getLogicResult(curr);});
+
+  (function(){
+    var node = document.createElement("caption");
+    var textnode = document.createTextNode("Таблица истинности для формулы:  "+TESTINGSTR);
+    node.appendChild(textnode);
+    document.getElementById("myTable").appendChild(node);
+    var headers = document.createElement("tr");
+    document.getElementById("myTable").appendChild(headers);
+
+    for (var test in arrOfObjects[0]) {
+      if (arrOfObjects[0].hasOwnProperty(test)) {
+          var th = document.createElement("th");
+          th.appendChild(document.createTextNode(test+""));
+          headers.appendChild(th);
+      }
+    }
+  }());
+
+  (function(){
+    arrOfObjects.forEach(function(curr){
+    var headers = document.createElement("tr");
+      for (var variable in curr) {
+        if (curr.hasOwnProperty(variable)) {
+          var td = document.createElement("td");
+          td.appendChild(document.createTextNode(curr[variable]+""));
+          headers.appendChild(td);
+        }
+      }
+    document.getElementById("myTable").appendChild(headers);
+  });}());
 
   console.log(arrOfObjects);
 }());

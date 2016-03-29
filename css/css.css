@@ -1,0 +1,8 @@
+td {
+  text-align: center;
+}
+table{
+  display: block;
+  position: absolute;
+  margin:  auto;
+}
