@@ -182,7 +182,7 @@
 
   (function(){
     var node = document.createElement("caption");
-    var textnode = document.createTextNode("Таблица истинности для формулы:"+TESTINGSTR);
+    var textnode = document.createTextNode("Таблица истинности для формулы:  "+TESTINGSTR);
     node.appendChild(textnode);
     document.getElementById("myTable").appendChild(node);
     var headers = document.createElement("tr");
