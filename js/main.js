@@ -1,7 +1,7 @@
 (function(){
   var PORYADOK_PEREMENNIH = "";
-  var TESTINGSTR = "(((A^B)v(BvC))^((!A)^(A->B)))";
-//  var TESTINGSTR = "((S~R)~((((P^S)^Q)v(!S))->))";
+//  var TESTINGSTR = "(((A^B)v(BvC))^((!A)^(A->B)))";
+ var TESTINGSTR = "(((P^(!Q))->Q)->(P->Q))";
 
 
   /*
