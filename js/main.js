@@ -1,6 +1,7 @@
 (function(){
   var PORYADOK_PEREMENNIH = "";
   var TESTINGSTR = "(((A^B)v(BvC))^((!A)^(A->(B^G))))";
+  var CLASSFORM = "";
 //  var TESTINGSTR = "((P->Q)~P)";
 
 
@@ -181,8 +182,18 @@
   arrOfObjects.forEach(function(curr){getLogicResult(curr);});
 
   (function(){
+    if (arrOfObjects.every(function(curr){return curr[TESTINGSTR] === 1;})) {
+      CLASSFORM = "выполнимая, общезначимая";
+    }else if (arrOfObjects.every(function(curr){return curr[TESTINGSTR] === 1;})) {
+      CLASSFORM = "противоречивая";
+    }else {
+      CLASSFORM = "выполнимая, нейтральная";
+    }
+  }());
+
+  (function(){
     var node = document.createElement("caption");
-    var textnode = document.createTextNode("Таблица истинности для формулы:  "+TESTINGSTR);
+    var textnode = document.createTextNode("Таблица истинности для формулы:  "+TESTINGSTR +"  "+CLASSFORM+"." );
     node.appendChild(textnode);
     document.getElementById("myTable").appendChild(node);
     var headers = document.createElement("tr");
